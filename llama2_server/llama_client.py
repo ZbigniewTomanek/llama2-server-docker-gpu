@@ -20,7 +20,7 @@ class EmbeddingData(BaseModel):
 
 
 class Embedding(BaseModel):
-    object: Literal["list"]
+    object: list
     model: str
     data: list[EmbeddingData]
     usage: EmbeddingUsage
@@ -108,14 +108,19 @@ class ChatCompletionChunk(BaseModel):
 
 
 # Requests models
-class ChatCompletionRequestMessage(BaseModel):
+
+class RequestModel(BaseModel, extra="forbid"):
+    pass
+
+
+class ChatCompletionRequestMessage(RequestModel):
     role: Literal["system", "user", "assistant"] = Field(
         default="user", description="The role of the message."
     )
     content: str = Field(default="", description="The content of the message.")
 
 
-class CreateChatCompletionRequest(BaseModel):
+class CreateChatCompletionRequest(RequestModel):
     messages: list[ChatCompletionRequestMessage] = Field(
         default=[], description="A list of messages to generate completions for."
     )
@@ -205,7 +210,7 @@ class CreateChatCompletionRequest(BaseModel):
     logit_bias_type: Optional[Literal["input_ids", "tokens"]] = Field(None)
 
 
-class CreateCompletionRequest(BaseModel):
+class CreateCompletionRequest(RequestModel):
     prompt: Union[str, list[str]] = Field(
         default="", description="The prompt to generate completions for."
     )
@@ -316,7 +321,7 @@ class CreateCompletionRequest(BaseModel):
     logit_bias_type: Optional[Literal["input_ids", "tokens"]] = Field(None)
 
 
-class CreateEmbeddingRequest(BaseModel):
+class CreateEmbeddingRequest(RequestModel):
     model: Optional[str] = Field(
         description="The model to use for generating completions.", default=None
     )
@@ -332,21 +337,27 @@ class LlamaClient:
         self.base_url = base_url
 
     def create_chat_completion(
-        self, request: CreateChatCompletionRequest
+            self, request: CreateChatCompletionRequest
     ) -> ChatCompletion:
         url = f"{self.base_url}/v1/chat/completions"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.dict()))
+        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        if response.status_code != 200:
+            raise ConnectionError(f"Error creating chat completion: {response.text}")
         return ChatCompletion(**response.json())
 
     def create_completions(self, request: CreateCompletionRequest) -> Completion:
         url = f"{self.base_url}/v1/completions"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.dict()))
+        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        if response.status_code != 200:
+            raise ConnectionError(f"Error creating completion: {response.text}")
         return Completion(**response.json())
 
     def create_embeddings(self, request: CreateEmbeddingRequest) -> Embedding:
         url = f"{self.base_url}/v1/embeddings"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.dict()))
+        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        if response.status_code != 200:
+            raise ConnectionError(f"Error creating embeddings: {response.text}")
         return Embedding(**response.json())
