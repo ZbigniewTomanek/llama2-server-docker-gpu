@@ -5,4 +5,4 @@ if [ "$(basename "$(pwd)")" != "docker" ]; then
   exit 1
 fi
 
-docker build --platform linux/amd64 -t llama-2-server-gpu:latest -f ./Dockerfile .. "$@"
+docker build -t llama-2-server-gpu:latest -f ./Dockerfile .. "$@"
