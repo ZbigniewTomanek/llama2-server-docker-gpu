@@ -109,6 +109,7 @@ class ChatCompletionChunk(BaseModel):
 
 # Requests models
 
+
 class RequestModel(BaseModel, extra="forbid"):
     pass
 
@@ -337,11 +338,13 @@ class LlamaClient:
         self.base_url = base_url
 
     def create_chat_completion(
-            self, request: CreateChatCompletionRequest
+        self, request: CreateChatCompletionRequest
     ) -> ChatCompletion:
         url = f"{self.base_url}/v1/chat/completions"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        response = requests.post(
+            url, headers=headers, data=json.dumps(request.model_dump())
+        )
         if response.status_code != 200:
             raise ConnectionError(f"Error creating chat completion: {response.text}")
         return ChatCompletion(**response.json())
@@ -349,7 +352,9 @@ class LlamaClient:
     def create_completions(self, request: CreateCompletionRequest) -> Completion:
         url = f"{self.base_url}/v1/completions"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        response = requests.post(
+            url, headers=headers, data=json.dumps(request.model_dump())
+        )
         if response.status_code != 200:
             raise ConnectionError(f"Error creating completion: {response.text}")
         return Completion(**response.json())
@@ -357,7 +362,9 @@ class LlamaClient:
     def create_embeddings(self, request: CreateEmbeddingRequest) -> Embedding:
         url = f"{self.base_url}/v1/embeddings"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=json.dumps(request.model_dump()))
+        response = requests.post(
+            url, headers=headers, data=json.dumps(request.model_dump())
+        )
         if response.status_code != 200:
             raise ConnectionError(f"Error creating embeddings: {response.text}")
         return Embedding(**response.json())

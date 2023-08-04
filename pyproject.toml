@@ -9,13 +9,13 @@ packages = [{include = "llama2_server"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-llama-cpp-python = {extras = ["server"], version = "^0.1.77"}
 huggingface-hub = "^0.16.4"
 joblib = "^1.3.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 typer = "^0.9.0"
+llama-cpp-python = {extras = ["server"], version = "^0.1.77"}
 
 [tool.poetry.scripts]
 llama-cli = "llama2_server.cli:app"

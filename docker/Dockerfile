@@ -24,7 +24,7 @@ COPY pyproject.toml poetry.lock ./
 # install poetry deps
 RUN poetry export -f requirements.txt | python3.9 -m pip install -r /dev/stdin
 # install llama-cpp-python compiled for GPU support
-RUN python3.9 -m pip uninstall -y llama-cpp-python && python3.9 -m pip install 'llama-cpp-python==0.1.77' \
+RUN python3.9 -m pip install 'llama-cpp-python[server]==0.1.77' \
     --prefer-binary --extra-index-url=https://jllllll.github.io/llama-cpp-python-cuBLAS-wheels/AVX/cu122
 
 COPY llama2_server ./llama2_server
